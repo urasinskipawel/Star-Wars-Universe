@@ -7,6 +7,7 @@ Simple application that describes planets from Star Wars Universe.
 - [General Information](#general-information)
 - [Technologies Used](#technologies-used)
 - [Installation](#installation)
+- [Screenshots](#screenshots)
 - [Ideas & Improvements](#ideas-improvements)
 
 ## General Information <a name="general-information"/> ℹ️
