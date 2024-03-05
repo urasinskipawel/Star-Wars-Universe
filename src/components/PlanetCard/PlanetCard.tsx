@@ -4,6 +4,46 @@ import uuid from 'react-uuid';
 import { Link, useParams } from 'react-router-dom';
 import { endpoints } from '../../constants/constants';
 import { People, Planet } from '../../interfaces/interfaces';
+import { styled } from '@mui/material/styles';
+import {
+	Alert,
+	Box,
+	Button,
+	CircularProgress,
+	Container,
+	Paper,
+	Table,
+	TableBody,
+	TableCell,
+	TableContainer,
+	TableHead,
+	TableRow,
+	Typography,
+	tableCellClasses,
+} from '@mui/material';
+
+const StyledTableCell = styled(TableCell)(() => ({
+	[`&.${tableCellClasses.head}`]: {
+		backgroundColor: '#1976D2',
+		color: '#fff',
+		fontWeight: 'bold',
+	},
+	[`&.${tableCellClasses.body}`]: {
+		padding: 8,
+	},
+}));
+
+const StyledBox = styled(Box)(() => ({
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+}));
+
+const StyledLink = styled(Link)(() => ({
+	textDecoration: 'none',
+	color: 'inherit',
+	fontWeight: 'bold',
+}));
 
 export const PlanetCard = () => {
 	const [planet, setPlanet] = useState<Planet | null>(null);
@@ -58,48 +98,76 @@ export const PlanetCard = () => {
 	}, [planet]);
 
 	return (
-		<>
+		<Container
+			disableGutters
+			sx={{
+				display: 'flex',
+				justifyContent: 'center',
+				alignItems: 'center',
+			}}>
 			{err ? (
-				<div>Ups... Something goes wrong</div>
+				<StyledBox sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+					<Alert variant='filled' severity='error'>
+						Something goes wrong.
+					</Alert>
+					<Button sx={{ mt: '20px' }} variant='contained'>
+						<StyledLink to='/'>Back to home page</StyledLink>
+					</Button>
+				</StyledBox>
 			) : (
-				<div>
+				<StyledBox sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+					<Typography variant='h2' gutterBottom>
+						{planet?.name}
+					</Typography>
 					{isLoading ? (
-						<div>Fetching data ...</div>
+						<CircularProgress sx={{ mt: '50px' }} size={100} />
 					) : (
-						<table>
-							<thead>
-								<tr>
-									<th>Name</th>
-									<th>Diameter</th>
-									<th>Climate</th>
-									<th>Terrain</th>
-									<th>Gravity</th>
-									<th>Population</th>
-									<th>Orbital Period</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr key={uuid()}>
-									<td>{planet?.name}</td>
-									<td>{planet?.diameter}</td>
-									<td>{planet?.climate}</td>
-									<td>{planet?.terrain}</td>
-									<td>{planet?.gravity}</td>
-									<td>{planet?.population}</td>
-									<td>{planet?.orbital_period}</td>
-								</tr>
-							</tbody>
-							<div>
-								<h1>Residents</h1>
-								<ul>{residents?.map(resident => <li key={uuid()}>{resident.name}</li>)}</ul>
-							</div>
-						</table>
+						<StyledBox sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+							<TableContainer sx={{ margin: '20px', minWidth: '70%' }} component={Paper}>
+								<Table aria-label='simple table'>
+									<TableHead>
+										<TableRow>
+											<StyledTableCell align='center'>Diameter</StyledTableCell>
+											<StyledTableCell align='center'>Climate</StyledTableCell>
+											<StyledTableCell align='center'>Terrain</StyledTableCell>
+											<StyledTableCell align='center'>Gravity</StyledTableCell>
+											<StyledTableCell align='center'>Population</StyledTableCell>
+											<StyledTableCell align='center'>Orbital Period</StyledTableCell>
+										</TableRow>
+									</TableHead>
+									<TableBody>
+										<TableRow key={uuid()}>
+											<StyledTableCell align='center'>{planet?.diameter}</StyledTableCell>
+											<StyledTableCell align='center'>{planet?.climate}</StyledTableCell>
+											<StyledTableCell align='center'>{planet?.terrain}</StyledTableCell>
+											<StyledTableCell align='center'>{planet?.gravity}</StyledTableCell>
+											<StyledTableCell align='center'>{planet?.population}</StyledTableCell>
+											<StyledTableCell align='center'>{planet?.orbital_period}</StyledTableCell>
+										</TableRow>
+									</TableBody>
+								</Table>
+							</TableContainer>
+							<Typography variant='h4' gutterBottom>
+								Residents:
+							</Typography>
+							<Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', width: '600px' }}>
+								{residents && residents.length > 0 ? (
+									residents.map((resident: People) => (
+										<Typography sx={{ padding: '2px' }} key={uuid()} variant='h6'>
+											{resident.name},
+										</Typography>
+									))
+								) : (
+									<Typography>There is no information about residents on this Planet</Typography>
+								)}
+							</Box>
+						</StyledBox>
 					)}
-					<button>
-						<Link to='/'>Back to planets list</Link>
-					</button>
-				</div>
+					<Button sx={{ mt: '20px' }} variant='contained'>
+						<StyledLink to='/'>Back to home page</StyledLink>
+					</Button>
+				</StyledBox>
 			)}
-		</>
+		</Container>
 	);
 };
