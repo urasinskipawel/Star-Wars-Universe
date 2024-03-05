@@ -1,26 +1,14 @@
 import React, { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import uuid from 'react-uuid';
-import { Link, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { endpoints } from '../../constants/constants';
 import { People, Planet } from '../../interfaces/interfaces';
 import { styled } from '@mui/material/styles';
-import {
-	Alert,
-	Box,
-	Button,
-	CircularProgress,
-	Container,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Typography,
-	tableCellClasses,
-} from '@mui/material';
+import { Box, Button, CircularProgress, Container, TableCell, Typography, tableCellClasses } from '@mui/material';
+import { NavigationLink } from '../NavigationLink/NavigationLink';
+import { AlertBox } from '../AlertBox/AlertBox';
+import { CustomTable } from '../CustomTable/CustomTable';
 
 const StyledTableCell = styled(TableCell)(() => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -39,10 +27,12 @@ const StyledBox = styled(Box)(() => ({
 	alignItems: 'center',
 }));
 
-const StyledLink = styled(Link)(() => ({
-	textDecoration: 'none',
-	color: 'inherit',
-	fontWeight: 'bold',
+const ResidentsBox = styled(Box)(() => ({
+	display: 'flex',
+	justifyContent: 'center',
+	flexWrap: 'wrap',
+	width: '600px',
+	marginBottom: '20px',
 }));
 
 export const PlanetCard = () => {
@@ -106,14 +96,7 @@ export const PlanetCard = () => {
 				alignItems: 'center',
 			}}>
 			{err ? (
-				<StyledBox>
-					<Alert variant='filled' severity='error'>
-						Something goes wrong.
-					</Alert>
-					<Button sx={{ mt: '20px' }} variant='contained'>
-						<StyledLink to='/'>Back to home page</StyledLink>
-					</Button>
-				</StyledBox>
+				<AlertBox />
 			) : (
 				<StyledBox>
 					<Typography variant='h2' gutterBottom>
@@ -123,34 +106,31 @@ export const PlanetCard = () => {
 						<CircularProgress sx={{ mt: '50px' }} size={100} />
 					) : (
 						<StyledBox>
-							<TableContainer sx={{ margin: '20px', minWidth: '70%' }} component={Paper}>
-								<Table aria-label='simple table'>
-									<TableHead>
-										<TableRow>
-											<StyledTableCell align='center'>Diameter</StyledTableCell>
-											<StyledTableCell align='center'>Climate</StyledTableCell>
-											<StyledTableCell align='center'>Terrain</StyledTableCell>
-											<StyledTableCell align='center'>Gravity</StyledTableCell>
-											<StyledTableCell align='center'>Population</StyledTableCell>
-											<StyledTableCell align='center'>Orbital Period</StyledTableCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>
-										<TableRow key={uuid()}>
-											<StyledTableCell align='center'>{planet?.diameter}</StyledTableCell>
-											<StyledTableCell align='center'>{planet?.climate}</StyledTableCell>
-											<StyledTableCell align='center'>{planet?.terrain}</StyledTableCell>
-											<StyledTableCell align='center'>{planet?.gravity}</StyledTableCell>
-											<StyledTableCell align='center'>{planet?.population}</StyledTableCell>
-											<StyledTableCell align='center'>{planet?.orbital_period}</StyledTableCell>
-										</TableRow>
-									</TableBody>
-								</Table>
-							</TableContainer>
+							<CustomTable
+								firstChild={
+									<>
+										<StyledTableCell align='center'>Diameter</StyledTableCell>
+										<StyledTableCell align='center'>Climate</StyledTableCell>
+										<StyledTableCell align='center'>Terrain</StyledTableCell>
+										<StyledTableCell align='center'>Gravity</StyledTableCell>
+										<StyledTableCell align='center'>Population</StyledTableCell>
+										<StyledTableCell align='center'>Orbital Period</StyledTableCell>
+									</>
+								}
+								secondChild={
+									<>
+										<StyledTableCell align='center'>{planet?.diameter}</StyledTableCell>
+										<StyledTableCell align='center'>{planet?.climate}</StyledTableCell>
+										<StyledTableCell align='center'>{planet?.terrain}</StyledTableCell>
+										<StyledTableCell align='center'>{planet?.gravity}</StyledTableCell>
+										<StyledTableCell align='center'>{planet?.population}</StyledTableCell>
+										<StyledTableCell align='center'>{planet?.orbital_period}</StyledTableCell>
+									</>
+								}></CustomTable>
 							<Typography variant='h4' gutterBottom>
 								Residents:
 							</Typography>
-							<Box sx={{ display: 'flex', justifyContent: 'center', flexWrap: 'wrap', width: '600px' }}>
+							<ResidentsBox>
 								{residents && residents.length > 0 ? (
 									residents.map((resident: People) => (
 										<Typography sx={{ padding: '2px' }} key={uuid()} variant='h6'>
@@ -160,11 +140,11 @@ export const PlanetCard = () => {
 								) : (
 									<Typography>There is no information about residents on this Planet</Typography>
 								)}
-							</Box>
+							</ResidentsBox>
 						</StyledBox>
 					)}
-					<Button sx={{ mt: '20px' }} variant='contained'>
-						<StyledLink to='/'>Back to home page</StyledLink>
+					<Button variant='contained'>
+						<NavigationLink href={'/'} text={'Go to main page'} />
 					</Button>
 				</StyledBox>
 			)}

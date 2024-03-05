@@ -2,26 +2,21 @@ import React, { ChangeEvent, useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import uuid from 'react-uuid';
 import { styled } from '@mui/material/styles';
-import { Link } from 'react-router-dom';
 import { endpoints } from '../../constants/constants';
 import { ApiResponse, Planet } from '../../interfaces/interfaces';
 import {
-	Alert,
 	Box,
-	Button,
 	CircularProgress,
 	Container,
 	Pagination,
-	Paper,
-	Table,
-	TableBody,
 	TableCell,
-	TableContainer,
-	TableHead,
 	TableRow,
 	Typography,
 	tableCellClasses,
 } from '@mui/material';
+import { AlertBox } from '../AlertBox/AlertBox';
+import { NavigationLink } from '../NavigationLink/NavigationLink';
+import { CustomTable } from '../CustomTable/CustomTable';
 
 const StyledTableCell = styled(TableCell)(() => ({
 	[`&.${tableCellClasses.head}`]: {
@@ -38,12 +33,6 @@ const StyledBox = styled(Box)(() => ({
 	display: 'flex',
 	flexDirection: 'column',
 	alignItems: 'center',
-}));
-
-const StyledLink = styled(Link)(() => ({
-	textDecoration: 'none',
-	color: 'inherit',
-	fontWeight: 'bold',
 }));
 
 export const PlanetsList = () => {
@@ -86,14 +75,7 @@ export const PlanetsList = () => {
 				justifyContent: 'center',
 			}}>
 			{err ? (
-				<StyledBox>
-					<Alert variant='filled' severity='error'>
-						Something goes wrong.
-					</Alert>
-					<Button variant='contained'>
-						<Link to='/'>Back to home page</Link>
-					</Button>
-				</StyledBox>
+				<AlertBox />
 			) : (
 				<StyledBox>
 					<Typography variant='h2' gutterBottom>
@@ -106,25 +88,25 @@ export const PlanetsList = () => {
 						<CircularProgress sx={{ mt: '50px' }} size={100} />
 					) : (
 						<StyledBox>
-							<TableContainer sx={{ margin: '20px' }} component={Paper}>
-								<Table sx={{ minWidth: 650 }} aria-label='simple table'>
-									<TableHead>
-										<TableRow>
-											<StyledTableCell align='center'>Name</StyledTableCell>
-											<StyledTableCell align='center'>Diameter</StyledTableCell>
-											<StyledTableCell align='center'>Climate</StyledTableCell>
-											<StyledTableCell align='center'>Terrain</StyledTableCell>
-										</TableRow>
-									</TableHead>
-									<TableBody>
+							<CustomTable
+								firstChild={
+									<>
+										<StyledTableCell align='center'>Name</StyledTableCell>
+										<StyledTableCell align='center'>Diameter</StyledTableCell>
+										<StyledTableCell align='center'>Climate</StyledTableCell>
+										<StyledTableCell align='center'>Terrain</StyledTableCell>
+									</>
+								}
+								secondChild={
+									<>
 										{planets?.map((planet: Planet) => {
 											const url = planet.url;
 											const parts = url.split('/');
 											const planetNumber = parts[parts.length - 2];
 											return (
-												<TableRow key={uuid()} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+												<TableRow key={uuid()}>
 													<StyledTableCell align='center'>
-														<StyledLink to={`planets/${planetNumber}`}>{planet.name}</StyledLink>
+														<NavigationLink href={`planets/${planetNumber}`} text={planet.name} />
 													</StyledTableCell>
 													<StyledTableCell align='center'>{planet.diameter}</StyledTableCell>
 													<StyledTableCell align='center'>{planet.climate}</StyledTableCell>
@@ -132,9 +114,8 @@ export const PlanetsList = () => {
 												</TableRow>
 											);
 										})}
-									</TableBody>
-								</Table>
-							</TableContainer>
+									</>
+								}></CustomTable>
 							<Pagination color='primary' count={totalPages} page={page} onChange={handlePage} shape='rounded'></Pagination>
 						</StyledBox>
 					)}
