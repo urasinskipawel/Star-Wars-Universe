@@ -106,7 +106,7 @@ export const PlanetCard = () => {
 				alignItems: 'center',
 			}}>
 			{err ? (
-				<StyledBox sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+				<StyledBox>
 					<Alert variant='filled' severity='error'>
 						Something goes wrong.
 					</Alert>
@@ -115,14 +115,14 @@ export const PlanetCard = () => {
 					</Button>
 				</StyledBox>
 			) : (
-				<StyledBox sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+				<StyledBox>
 					<Typography variant='h2' gutterBottom>
 						{planet?.name}
 					</Typography>
 					{isLoading ? (
 						<CircularProgress sx={{ mt: '50px' }} size={100} />
 					) : (
-						<StyledBox sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+						<StyledBox>
 							<TableContainer sx={{ margin: '20px', minWidth: '70%' }} component={Paper}>
 								<Table aria-label='simple table'>
 									<TableHead>
