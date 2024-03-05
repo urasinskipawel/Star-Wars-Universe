@@ -3,18 +3,18 @@ import axios, { AxiosResponse } from 'axios';
 import uuid from 'react-uuid';
 import { Link, useParams } from 'react-router-dom';
 import { endpoints } from '../../constants/constants';
-import { Planet } from '../../interfaces/interfaces';
+import { People, Planet } from '../../interfaces/interfaces';
 
 export const PlanetCard = () => {
 	const [planet, setPlanet] = useState<Planet | null>(null);
+	const [residents, setResidents] = useState<People[] | null>(null);
 	const [isLoading, setIsLoading] = useState<boolean>(false);
 	const [err, setErr] = useState<string>('');
 
 	const { id } = useParams();
 
-	const planetUrl = `${endpoints.planetsUrl}/${id}`;
-
-	const fetchPlanetsData = async (): Promise<void> => {
+	const fetchCurrentPlanetData = async (): Promise<void> => {
+		const planetUrl = `${endpoints.planetsUrl}/${id}`;
 		setIsLoading(true);
 
 		try {
@@ -29,9 +29,33 @@ export const PlanetCard = () => {
 		}
 	};
 
+	const fetchResidentsData = async (): Promise<void> => {
+		setIsLoading(true);
+
+		try {
+			const planetResidents = planet?.residents as string[];
+			if (planetResidents) {
+				const res = await Promise.all(planetResidents.map(url => axios.get(url)));
+				const residentsData = res.map(response => response.data as People);
+				setResidents(residentsData);
+			}
+		} catch (err) {
+			console.error(err);
+			setErr(err as string);
+		} finally {
+			setIsLoading(false);
+		}
+	};
+
 	useEffect(() => {
-		void fetchPlanetsData();
+		void fetchCurrentPlanetData();
 	}, []);
+
+	useEffect(() => {
+		if (planet) {
+			void fetchResidentsData();
+		}
+	}, [planet]);
 
 	return (
 		<>
@@ -52,7 +76,6 @@ export const PlanetCard = () => {
 									<th>Gravity</th>
 									<th>Population</th>
 									<th>Orbital Period</th>
-									<th>Residents</th>
 								</tr>
 							</thead>
 							<tbody>
@@ -64,9 +87,12 @@ export const PlanetCard = () => {
 									<td>{planet?.gravity}</td>
 									<td>{planet?.population}</td>
 									<td>{planet?.orbital_period}</td>
-									<td>{planet?.residents}</td>
 								</tr>
 							</tbody>
+							<div>
+								<h1>Residents</h1>
+								<ul>{residents?.map(resident => <li key={uuid()}>{resident.name}</li>)}</ul>
+							</div>
 						</table>
 					)}
 					<button>

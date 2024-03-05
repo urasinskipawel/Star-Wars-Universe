@@ -3,7 +3,7 @@ import axios, { AxiosResponse } from 'axios';
 import uuid from 'react-uuid';
 import { Link } from 'react-router-dom';
 import { endpoints } from '../../constants/constants';
-import { Planet, PlanetsResponse } from '../../interfaces/interfaces';
+import { ApiResponse, Planet } from '../../interfaces/interfaces';
 
 export const PlanetsList = () => {
 	const [planets, setPlanets] = useState<Planet[] | null>([]);
@@ -13,18 +13,17 @@ export const PlanetsList = () => {
 	const [lastPage, setLastPage] = useState<string | null>('');
 	const [firstPage, setFirstPage] = useState<string | null>('');
 
-	const pageUrl = `${endpoints.planetsUrl}?page=${page}`;
-
-	const fetchPlanetData = async (): Promise<void> => {
+	const fetchPlanetsData = async (): Promise<void> => {
+		const pageUrl = `${endpoints.planetsUrl}?page=${page}`;
 		setIsLoading(true);
 
 		try {
-			const res: AxiosResponse<PlanetsResponse> = await axios.get(pageUrl);
+			const res: AxiosResponse<ApiResponse> = await axios.get(pageUrl);
 			const data = res.data;
 
 			setLastPage(data.next);
 			setFirstPage(data.previous);
-			setPlanets(data.results);
+			setPlanets(data.results as Planet[]);
 		} catch (err) {
 			setErr(err as string);
 		} finally {
@@ -37,7 +36,7 @@ export const PlanetsList = () => {
 	};
 
 	useEffect(() => {
-		void fetchPlanetData();
+		void fetchPlanetsData();
 	}, [page]);
 
 	return (
