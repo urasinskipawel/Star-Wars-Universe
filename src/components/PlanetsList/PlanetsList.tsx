@@ -34,6 +34,12 @@ const StyledTableCell = styled(TableCell)(() => ({
 	},
 }));
 
+const StyledBox = styled(Box)(() => ({
+	display: 'flex',
+	flexDirection: 'column',
+	alignItems: 'center',
+}));
+
 const StyledLink = styled(Link)(() => ({
 	textDecoration: 'none',
 	color: 'inherit',
@@ -80,16 +86,16 @@ export const PlanetsList = () => {
 				justifyContent: 'center',
 			}}>
 			{err ? (
-				<Box>
+				<StyledBox>
 					<Alert variant='filled' severity='error'>
 						Something goes wrong.
 					</Alert>
 					<Button variant='contained'>
 						<Link to='/'>Back to home page</Link>
 					</Button>
-				</Box>
+				</StyledBox>
 			) : (
-				<Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+				<StyledBox>
 					<Typography variant='h2' gutterBottom>
 						Welcome to Star Wars Universe!
 					</Typography>
@@ -97,40 +103,42 @@ export const PlanetsList = () => {
 						Type the planet name to find out more details!
 					</Typography>
 					{isLoading ? (
-						<CircularProgress size={100} />
+						<CircularProgress sx={{ mt: '50px' }} size={100} />
 					) : (
-						<TableContainer component={Paper} sx={{ margin: '20px' }}>
-							<Table sx={{ minWidth: 650 }} aria-label='simple table'>
-								<TableHead>
-									<TableRow>
-										<StyledTableCell align='center'>Name</StyledTableCell>
-										<StyledTableCell align='center'>Diameter</StyledTableCell>
-										<StyledTableCell align='center'>Climate</StyledTableCell>
-										<StyledTableCell align='center'>Terrain</StyledTableCell>
-									</TableRow>
-								</TableHead>
-								<TableBody>
-									{planets?.map((planet: Planet) => {
-										const url = planet.url;
-										const parts = url.split('/');
-										const planetNumber = parts[parts.length - 2];
-										return (
-											<TableRow key={uuid()} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
-												<StyledTableCell align='center'>
-													<StyledLink to={`planets/${planetNumber}`}>{planet.name}</StyledLink>
-												</StyledTableCell>
-												<StyledTableCell align='center'>{planet.diameter}</StyledTableCell>
-												<StyledTableCell align='center'>{planet.climate}</StyledTableCell>
-												<StyledTableCell align='center'>{planet.terrain}</StyledTableCell>
-											</TableRow>
-										);
-									})}
-								</TableBody>
-							</Table>
-						</TableContainer>
+						<StyledBox>
+							<TableContainer sx={{ margin: '20px' }} component={Paper}>
+								<Table sx={{ minWidth: 650 }} aria-label='simple table'>
+									<TableHead>
+										<TableRow>
+											<StyledTableCell align='center'>Name</StyledTableCell>
+											<StyledTableCell align='center'>Diameter</StyledTableCell>
+											<StyledTableCell align='center'>Climate</StyledTableCell>
+											<StyledTableCell align='center'>Terrain</StyledTableCell>
+										</TableRow>
+									</TableHead>
+									<TableBody>
+										{planets?.map((planet: Planet) => {
+											const url = planet.url;
+											const parts = url.split('/');
+											const planetNumber = parts[parts.length - 2];
+											return (
+												<TableRow key={uuid()} sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+													<StyledTableCell align='center'>
+														<StyledLink to={`planets/${planetNumber}`}>{planet.name}</StyledLink>
+													</StyledTableCell>
+													<StyledTableCell align='center'>{planet.diameter}</StyledTableCell>
+													<StyledTableCell align='center'>{planet.climate}</StyledTableCell>
+													<StyledTableCell align='center'>{planet.terrain}</StyledTableCell>
+												</TableRow>
+											);
+										})}
+									</TableBody>
+								</Table>
+							</TableContainer>
+							<Pagination color='primary' count={totalPages} page={page} onChange={handlePage} shape='rounded'></Pagination>
+						</StyledBox>
 					)}
-					<Pagination color='primary' count={totalPages} page={page} onChange={handlePage} shape='rounded'></Pagination>
-				</Box>
+				</StyledBox>
 			)}
 		</Container>
 	);
