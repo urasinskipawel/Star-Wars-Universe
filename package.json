@@ -10,6 +10,12 @@
 		"preview": "vite preview"
 	},
 	"dependencies": {
+		"@emotion/react": "^11.11.1",
+		"@emotion/styled": "^11.11.0",
+		"@mui/icons-material": "^5.14.3",
+		"@mui/material": "^5.14.9",
+		"@mui/styles": "^5.14.9",
+		"@mui/types": "^7.2.4",
 		"axios": "^1.6.7",
 		"eslint-plugin-react": "^7.34.0",
 		"react": "^18.2.0",

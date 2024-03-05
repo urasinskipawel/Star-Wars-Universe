@@ -1,6 +1,4 @@
 import React from 'react';
-
-import './App.css';
 import { PlanetsList } from '../PlanetsList/PlanetsList';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { PlanetCard } from '../PlanetCard/PlanetCard';
