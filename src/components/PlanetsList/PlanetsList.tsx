@@ -1,29 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import axios, { AxiosResponse } from 'axios';
 import uuid from 'react-uuid';
-
-interface Planet {
-	name: string;
-	rotation_period: string;
-	orbital_period: string;
-	diameter: string;
-	climate: string;
-	gravity: string;
-	terrain: string;
-	surface_water: string;
-	population: string;
-	residents: string[];
-	films: string[];
-	created: string;
-	edited: string;
-	url: string;
-}
-interface PlanetsResponse {
-	count: number;
-	next: string | null;
-	previous: string | null;
-	results: Planet[];
-}
+import { Link } from 'react-router-dom';
+import { endpoints } from '../../constants/constants';
+import { Planet, PlanetsResponse } from '../../interfaces/interfaces';
 
 export const PlanetsList = () => {
 	const [planets, setPlanets] = useState<Planet[] | null>([]);
@@ -33,10 +13,9 @@ export const PlanetsList = () => {
 	const [lastPage, setLastPage] = useState<string | null>('');
 	const [firstPage, setFirstPage] = useState<string | null>('');
 
-	const URL = 'https://swapi.dev/api/planets';
-	const pageUrl = `${URL}?page=${page}`;
+	const pageUrl = `${endpoints.planetsUrl}?page=${page}`;
 
-	const fetchData = async (): Promise<void> => {
+	const fetchPlanetData = async (): Promise<void> => {
 		setIsLoading(true);
 
 		try {
@@ -58,49 +37,60 @@ export const PlanetsList = () => {
 	};
 
 	useEffect(() => {
-		void fetchData();
+		void fetchPlanetData();
 	}, [page]);
 
 	return (
-		<div>
-			{isLoading && <div>Ładowanie danych...</div>}
+		<>
 			{err ? (
 				<div>Ups... Something goes wrong</div>
 			) : (
-				<table>
-					<thead>
-						<tr>
-							<th>Name</th>
-							<th>Diameter</th>
-							<th>Climate</th>
-							<th>Terrain</th>
-						</tr>
-					</thead>
-					<tbody>
-						{planets?.map((planet: Planet) => (
-							<tr key={uuid()}>
-								<td>{planet.name}</td>
-								<td>{planet.diameter}</td>
-								<td>{planet.climate}</td>
-								<td>{planet.terrain}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
+				<div>
+					{isLoading ? (
+						<div>Fetching data ...</div>
+					) : (
+						<table>
+							<thead>
+								<tr>
+									<th>Name</th>
+									<th>Diameter</th>
+									<th>Climate</th>
+									<th>Terrain</th>
+								</tr>
+							</thead>
+							<tbody>
+								{planets?.map((planet: Planet) => {
+									const url = planet.url;
+									const parts = url.split('/');
+									const planetNumber = parts[parts.length - 2];
+									return (
+										<tr key={uuid()}>
+											<td>
+												<Link to={`planets/${planetNumber}`}>{planet.name}</Link>
+											</td>
+											<td>{planet.diameter}</td>
+											<td>{planet.climate}</td>
+											<td>{planet.terrain}</td>
+										</tr>
+									);
+								})}
+							</tbody>
+						</table>
+					)}
+					<section>
+						<button disabled={!firstPage || isLoading} onClick={() => handlePage(1)}>
+							first
+						</button>
+						<button disabled={!firstPage || isLoading} onClick={() => handlePage(page - 1)}>
+							previous
+						</button>
+						<button disabled={!lastPage || isLoading} onClick={() => handlePage(page + 1)}>
+							next
+						</button>
+						<div>Current page : {page}</div>
+					</section>
+				</div>
 			)}
-
-			<section>
-				<button disabled={firstPage === null} onClick={() => handlePage(1)}>
-					first
-				</button>
-				<button disabled={firstPage === null} onClick={() => handlePage(page - 1)}>
-					previous
-				</button>
-				<button disabled={lastPage === null} onClick={() => handlePage(page + 1)}>
-					next
-				</button>
-				<div>Current page : {page}</div>
-			</section>
-		</div>
+		</>
 	);
 };
